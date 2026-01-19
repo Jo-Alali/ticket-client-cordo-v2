@@ -8,20 +8,40 @@ export class CustomerSearch {
 
     render() {
         const div = document.createElement('div');
-        div.className = 'search-container';
+        div.style.position = 'relative'; // For dropdown positioning
         div.innerHTML = `
-            <i class="fas fa-search" style="color: var(--text-muted); margin-right: 10px;"></i>
-            <input type="text" id="customer-search-input" placeholder="Rechercher client (Nom, Tél)..." 
-                style="border: none; outline: none; font-size: 1rem; flex: 1; background: transparent;">
-            <button id="btn-new-customer" title="Nouveau Client" style="border: none; background: transparent; cursor: pointer; color: var(--primary-color);">
-                <i class="fas fa-user-plus"></i>
-            </button>
-            <!-- Dropdown results container (hidden by default) -->
+            <input type="text" id="customer-search-input" placeholder="Rechercher (Nom, Tel)..." autocomplete="off">
             <div id="search-results" class="search-results hidden"></div>
         `;
 
-        // Add styles for dropdown directly or use theme.css
-        // For now, I'll rely on theme.css (need to ensure it has .search-results)
+        // Inline styles for results dropdown since it's component specific
+        const style = document.createElement('style');
+        style.textContent = `
+            .search-results {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-md);
+                box-shadow: var(--shadow-sm);
+                z-index: 100;
+                max-height: 200px;
+                overflow-y: auto;
+                margin-top: 4px;
+            }
+            .search-results.hidden { display: none; }
+            .search-item {
+                padding: 10px;
+                cursor: pointer;
+                border-bottom: 1px solid var(--bg-main);
+            }
+            .search-item:hover { background-color: var(--bg-main); }
+            .customer-name { font-weight: 500; }
+            .customer-phone { font-size: 0.85rem; color: var(--text-muted); }
+        `;
+        div.appendChild(style);
 
         this.container = div;
         this.bindEvents();
@@ -46,17 +66,21 @@ export class CustomerSearch {
                 await this.performSearch(query, resultsDiv);
             }, 300);
         });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!this.container.contains(e.target)) {
+                resultsDiv.classList.add('hidden');
+            }
+        });
     }
 
     async performSearch(query, resultsDiv) {
         try {
-            console.log(`Searching for: ${query}`);
             const customers = await api.searchShopifyCustomers(query);
             this.renderResults(customers, resultsDiv);
         } catch (error) {
             console.error('Search error', error);
-            resultsDiv.innerHTML = '<div class="search-item error">Erreur de recherche</div>';
-            resultsDiv.classList.remove('hidden');
         }
     }
 
@@ -82,15 +106,9 @@ export class CustomerSearch {
     }
 
     selectCustomer(customer, resultsDiv) {
-        console.log('Selected customer:', customer);
-        // Dispatch event so Layout or Store can handle it
         document.dispatchEvent(new CustomEvent('customer-selected', { detail: customer }));
-
-        // Update input
         const input = this.container.querySelector('#customer-search-input');
         input.value = `${customer.first_name} ${customer.last_name}`;
-
-        // Hide results
         resultsDiv.classList.add('hidden');
     }
 }
