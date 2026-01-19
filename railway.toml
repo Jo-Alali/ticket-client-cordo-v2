@@ -1,0 +1,22 @@
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+healthcheckPath = "/"
+restartPolicyType = "ON_FAILURE"
+
+[build.nixpacks]
+phases.setup = "npm ci"
+phases.install = "npm install"
+phases.build = "npm run build"
+start = "npm start"
+
+[build.nixpacks.env]
+NODE_ENV = "production"
+# Emplacement des données
+DATA_DIR = "./data"
+
+# Variables Shopify (à configurer dans Railway Dashboard)
+# SHOPIFY_STORE_DOMAIN = "votre-boutique.myshopify.com"
+# SHOPIFY_ADMIN_TOKEN = ""
+# SHOPIFY_API_VERSION = "2023-10"

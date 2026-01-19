@@ -1,0 +1,28 @@
+{
+  "name": "ticket-client-cordo",
+  "version": "1.0.0",
+  "description": "Application de génération de tickets de cordonnerie - Version statique",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "build": "cd client && npm install && npm run build",
+    "server": "cd server && npm start",
+    "client": "cd client && npm run dev"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.2.0",
+    "node-fetch": "^2.7.0"
+  },
+  "keywords": [
+    "cordonnerie",
+    "tickets",
+    "html",
+    "css",
+    "javascript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
