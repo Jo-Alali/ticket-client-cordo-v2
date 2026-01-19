@@ -1,15 +1,12 @@
-import { globalState, appState } from './state.js';
-import { api } from './api.js';
+import { Layout } from './components/Layout.js';
 
-console.log('🚀 Ticket Client Cordo - Initialized');
-
-// TODO: Migrer le reste de la logique de script_legacy.js ici ou dans d'autres modules (events.js, ui.js)
+console.log('🚀 Ticket Client Cordo - v2.0 Initialized');
 
 async function init() {
     try {
-        const { tickets } = await api.getRecentTickets();
-        console.log('Tickets récents chargés:', tickets);
-        // Initialiser UI...
+        const layout = new Layout();
+        layout.render();
+        console.log('Layout rendered');
     } catch (e) {
         console.error('Erreur init', e);
     }
